@@ -15,15 +15,6 @@ if (!team || teamCodes[team] !== code) {
     throw new Error("blocked");
 }
 
-// ---------------- MISSIONS ----------------
-const missions = [
-    { q: "Which planet rotates on its side?", a: "uranus" },
-    { q: "Which moon of Saturn has methane lakes?", a: "titan" },
-    { q: "What molecule is H₂O?", a: "water" },
-    { q: "Which telescope discovered exoplanets?", a: "kepler" },
-    { q: "Which planet is the Red Planet?", a: "mars" }
-];
-
 // ---------------- STATE ----------------
 let saved = localStorage.getItem(team + "_m");
 let current = saved ? parseInt(saved) : 0;
