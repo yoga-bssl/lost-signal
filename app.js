@@ -1,71 +1,106 @@
+// ----------------------------
+// TEAM SETUP
+// ----------------------------
 const params = new URLSearchParams(window.location.search);
 const team = params.get("team") || "unknown";
 
-alert(team);
-
+// ----------------------------
+// MISSIONS
+// ----------------------------
 const missions = [
-{
-    question: "Which planet rotates on its side?",
-    answer: "uranus"
-},
-{
-    question: "Which moon of Saturn has methane lakes?",
-    answer: "titan"
-},
-{
-    question: "What molecule is H₂O?",
-    answer: "water"
-}
+    {
+        question: "Which planet rotates on its side?",
+        answer: "uranus"
+    },
+    {
+        question: "Which moon of Saturn has methane lakes?",
+        answer: "titan"
+    },
+    {
+        question: "What molecule is H₂O?",
+        answer: "water"
+    },
+    {
+        question: "Which famous telescope discovered thousands of exoplanets?",
+        answer: "kepler"
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        answer: "mars"
+    }
 ];
 
-let currentMission = 0;
+// ----------------------------
+// LOAD SAVED PROGRESS
+// ----------------------------
+let saved = localStorage.getItem(team + "_mission");
+let currentMission = saved ? parseInt(saved) : 0;
 
-function showMission() {
+// ----------------------------
+// RENDER FUNCTION
+// ----------------------------
+function render() {
+
+    const game = document.getElementById("game");
+
+    let signal = Math.max(0, 100 - currentMission * 20);
 
     if (currentMission >= missions.length) {
-        document.getElementById("game").innerHTML =
-            "<h2>Mission Complete 🚀</h2>";
+        game.innerHTML = `
+            <h2>Mission Complete 🚀</h2>
+            <p>Signal fully recovered.</p>
+            <p>Proceed to Mission Debrief (lunch).</p>
+        `;
         return;
     }
 
-    document.getElementById("game").innerHTML = `
-        <h2>Checkpoint ${currentMission + 1}</h2>
+    game.innerHTML = `
+        <h2>Team: ${team.toUpperCase()}</h2>
+
+        <p>Signal Strength: ${signal}%</p>
+
+        <h3>Checkpoint ${currentMission + 1}</h3>
 
         <p>${missions[currentMission].question}</p>
 
-        <input id="answer">
+        <input id="answer" placeholder="Enter answer..." />
 
-        <br><br>
+        <br>
 
-        <button onclick="checkAnswer()">
-            Submit
-        </button>
+        <button onclick="check()">Submit</button>
 
-        <p id="message"></p>
+        <p id="msg"></p>
     `;
 }
 
-function checkAnswer() {
+// ----------------------------
+// ANSWER CHECK
+// ----------------------------
+function check() {
 
-    let answer =
-        document.getElementById("answer")
+    const input = document
+        .getElementById("answer")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
-    if (answer === missions[currentMission].answer) {
+    if (input === missions[currentMission].answer) {
 
         currentMission++;
 
-        showMission();
+        localStorage.setItem(team + "_mission", currentMission);
+
+        render();
 
     } else {
 
-        document.getElementById("message")
-            .innerText =
-            "Incorrect. Try again.";
+        document.getElementById("msg").innerText =
+            "Incorrect signal. Try again.";
 
     }
-
 }
 
-showMission();
+// ----------------------------
+// START GAME
+// ----------------------------
+render();
