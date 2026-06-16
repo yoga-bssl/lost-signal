@@ -1,22 +1,165 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Blue Skies Space — Signal Hunt</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-</head>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at top, #0b1a33, #050914);
+    color: white;
+    text-align: center;
+}
 
-<body>
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding-top: 40px;
+}
 
-<div class="container">
-    <h1>🛰 Blue Skies Space</h1>
-    <div id="app"></div>
-</div>
+.card {
+    background: rgba(255,255,255,0.06);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+}
 
-<script src="nodes.js"></script>
-<script src="field.js"></script>
-<script src="engine.js"></script>
-<script src="app.js"></script>
+input {
+    padding: 10px;
+    width: 80%;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+}
 
-</body>
-</html>
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background: #2b6fff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4a86ff;
+}
+
+.cinema {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: black;
+    color: #7fd1ff;
+}
+
+.glow {
+    text-shadow: 0 0 12px #7fd1ff;
+}
+
+.fade { opacity: 0.8; }
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+.signal-bar {
+    height: 10px;
+    width: 100%;
+    background: linear-gradient(90deg, red, orange, yellow, green);
+    margin-top: 10px;
+    border-radius: 5px;
+    animation: pulseBar 2s infinite;
+}
+
+@keyframes pulseBar {
+    0% { filter: brightness(0.7); }
+    50% { filter: brightness(1.4); }
+    100% { filter: brightness(0.7); }
+}
+
+/* CONTROL ROOM */
+.control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 80px 1fr;
+    height: 100vh;
+    background: radial-gradient(circle at center, #071a2d, #02050a);
+    color: #7fd1ff;
+}
+
+.header {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.board {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.panel {
+    background: rgba(255,255,255,0.05);
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.2; }
+}
+
+.radar {
+    position: relative;
+    margin: auto;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    border: 2px solid rgba(127,209,255,0.3);
+}
+
+.sweep {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        rgba(127,209,255,0.0),
+        rgba(127,209,255,0.25),
+        rgba(127,209,255,0.0)
+    );
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.radar-core {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #7fd1ff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px #7fd1ff;
+}
