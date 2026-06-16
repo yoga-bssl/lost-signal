@@ -1,3 +1,8 @@
+const params = new URLSearchParams(window.location.search);
+const team = params.get("team") || "unknown";
+
+alert(team);
+
 const missions = [
 {
     question: "Which planet rotates on its side?",
