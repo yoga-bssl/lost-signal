@@ -1,106 +1,135 @@
-// ----------------------------
-// TEAM SETUP
-// ----------------------------
+// ---------------- SECURITY ----------------
 const params = new URLSearchParams(window.location.search);
-const team = params.get("team") || "unknown";
+const team = params.get("team");
+const code = params.get("code");
 
-// ----------------------------
-// MISSIONS
-// ----------------------------
+const teamCodes = {
+    orion: "NEBULA7",
+    polaris: "QUASAR4",
+    cassiopeia: "PULSAR9",
+    andromeda: "ORBIT2"
+};
+
+if (!team || teamCodes[team] !== code) {
+    document.body.innerHTML = "<h2>🚫 Access Denied</h2>";
+    throw new Error("blocked");
+}
+
+// ---------------- MISSIONS ----------------
 const missions = [
-    {
-        question: "Which planet rotates on its side?",
-        answer: "uranus"
-    },
-    {
-        question: "Which moon of Saturn has methane lakes?",
-        answer: "titan"
-    },
-    {
-        question: "What molecule is H₂O?",
-        answer: "water"
-    },
-    {
-        question: "Which famous telescope discovered thousands of exoplanets?",
-        answer: "kepler"
-    },
-    {
-        question: "Which planet is known as the Red Planet?",
-        answer: "mars"
-    }
+    { q: "Which planet rotates on its side?", a: "uranus" },
+    { q: "Which moon of Saturn has methane lakes?", a: "titan" },
+    { q: "What molecule is H₂O?", a: "water" },
+    { q: "Which telescope discovered exoplanets?", a: "kepler" },
+    { q: "Which planet is the Red Planet?", a: "mars" }
 ];
 
-// ----------------------------
-// LOAD SAVED PROGRESS
-// ----------------------------
-let saved = localStorage.getItem(team + "_mission");
-let currentMission = saved ? parseInt(saved) : 0;
+// ---------------- STATE ----------------
+let saved = localStorage.getItem(team + "_m");
+let current = saved ? parseInt(saved) : 0;
 
-// ----------------------------
-// RENDER FUNCTION
-// ----------------------------
+let stage = "intro";
+
+// ---------------- CINEMATIC START ----------------
+setTimeout(() => {
+    stage = "login";
+    render();
+}, 4500);
+
+// ---------------- RENDER ----------------
 function render() {
 
-    const game = document.getElementById("game");
+    const app = document.getElementById("app");
 
-    let signal = Math.max(0, 100 - currentMission * 20);
-
-    if (currentMission >= missions.length) {
-        game.innerHTML = `
-            <h2>Mission Complete 🚀</h2>
-            <p>Signal fully recovered.</p>
-            <p>Proceed to Mission Debrief (lunch).</p>
+    // INTRO
+    if (stage === "intro") {
+        app.innerHTML = `
+            <div class="cinema">
+                <h1>🛰 BLUE SKIES SPACE</h1>
+                <p class="glow">MISSION CONTROL INITIALISING</p>
+                <p class="fade">A deep space signal has been detected...</p>
+                <p class="fade">Fragments are appearing across London...</p>
+                <p class="pulse">RECOVER THE LOST SIGNAL</p>
+            </div>
         `;
         return;
     }
 
-    game.innerHTML = `
-        <h2>Team: ${team.toUpperCase()}</h2>
+    // LOGIN
+    if (stage === "login") {
+        app.innerHTML = `
+            <div class="card">
+                <h2>Mission Authentication</h2>
+                <p>Team: ${team.toUpperCase()}</p>
 
-        <p>Signal Strength: ${signal}%</p>
+                <input id="code" placeholder="Access code" />
+                <br>
+                <button onclick="auth()">Enter Mission</button>
 
-        <h3>Checkpoint ${currentMission + 1}</h3>
+                <p id="msg"></p>
+            </div>
+        `;
+        return;
+    }
 
-        <p>${missions[currentMission].question}</p>
+    // COMPLETE
+    if (current >= missions.length) {
+        app.innerHTML = `
+            <div class="cinema">
+                <h1>🛰 SIGNAL RECONSTRUCTED</h1>
+                <p class="glow">Transmission restored</p>
+                <p class="pulse">RENDEZVOUS FOR DEBRIEF</p>
+            </div>
+        `;
+        return;
+    }
 
-        <input id="answer" placeholder="Enter answer..." />
+    // GAME
+    let signal = Math.max(0, 100 - current * 20);
 
-        <br>
+    app.innerHTML = `
+        <div class="card">
 
-        <button onclick="check()">Submit</button>
+            <h3>TEAM ${team.toUpperCase()}</h3>
 
-        <p id="msg"></p>
+            <p>Signal Strength: ${signal}%</p>
+            <div class="signal-bar"></div>
+
+            <h2>Checkpoint ${current + 1}</h2>
+            <p>${missions[current].q}</p>
+
+            <input id="a" placeholder="answer" />
+            <br>
+            <button onclick="check()">Submit</button>
+
+            <p id="msg"></p>
+
+        </div>
     `;
 }
 
-// ----------------------------
-// ANSWER CHECK
-// ----------------------------
-function check() {
-
-    const input = document
-        .getElementById("answer")
-        .value
-        .toLowerCase()
-        .trim();
-
-    if (input === missions[currentMission].answer) {
-
-        currentMission++;
-
-        localStorage.setItem(team + "_mission", currentMission);
-
+// ---------------- LOGIN ----------------
+function auth() {
+    const v = document.getElementById("code").value;
+    if (v === teamCodes[team]) {
+        stage = "game";
         render();
-
     } else {
-
-        document.getElementById("msg").innerText =
-            "Incorrect signal. Try again.";
-
+        document.getElementById("msg").innerText = "Incorrect code";
     }
 }
 
-// ----------------------------
-// START GAME
-// ----------------------------
+// ---------------- CHECK ANSWER ----------------
+function check() {
+    const v = document.getElementById("a").value.toLowerCase().trim();
+
+    if (v === missions[current].a) {
+        current++;
+        localStorage.setItem(team + "_m", current);
+        render();
+    } else {
+        document.getElementById("msg").innerText = "Signal mismatch";
+    }
+}
+
 render();
